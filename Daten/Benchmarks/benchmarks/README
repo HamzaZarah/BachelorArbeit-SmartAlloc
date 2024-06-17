@@ -1,0 +1,10 @@
+The problem description is a single dictionary with the following components:
+
+ - timeslots: a description of each time slot, where the key is the identifier
+ of the timeslot
+ - team_size: if present, students need to team up to teams of the given size
+ - students: a dictionary of students, where each student is itself a dictionary
+ with the following parts:
+  - group: a list of other students that should be grouped with this student
+  - language: language preference (0 - no, 1 - maybe, 2 - yes)
+  - slot: timeslot preference (0 - no, 1 - maybe, 2 - yes)

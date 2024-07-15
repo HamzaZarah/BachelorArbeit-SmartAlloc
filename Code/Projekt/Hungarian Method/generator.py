@@ -33,9 +33,12 @@ def generate(name, num_students, slot_weights, preteam_dist, language_pref, slot
     out = dict()
     out['team_size'] = team_size
     out['timeslots'] = dict()
+    out['timeslot_languages'] = dict()  # Neues Dictionary für die Sprachzuweisungen der Timeslots
     for s in range(num_slots):
         for i in range(slot_weights[s]):
-            out['timeslots'][f"{slots[s][0][0:2]}{slots[s][1][0:2]}_{i}"] = f"{slots[s][0]} {slots[s][1]}"
+            slot_key = f"{slots[s][0][0:2]}{slots[s][1][0:2]}_{i}"
+            out['timeslots'][slot_key] = f"{slots[s][0]} {slots[s][1]}"
+            out['timeslot_languages'][slot_key] = random.choice(["E", "G"])  # Zuweisung einer zufälligen Sprache
     out['students'] = dict()
 
     students = ["S{:03d}".format(i+1) for i in range(num_students)]

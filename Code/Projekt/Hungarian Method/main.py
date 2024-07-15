@@ -18,17 +18,17 @@ def main():
 
     sorted_assignments = sorted(assignments, key=lambda x: student_ids[x[1]])
 
-    print('Optimale Lösung gefunden:')
+    print('Optimal solution found:')
     slot_counts = {slot: 0 for slot in timeslot_ids}
     for slot_idx, student_idx in sorted_assignments:
         student = student_ids[student_idx]
         slot = timeslot_ids[slot_idx]
         slot_counts[slot] += 1
-        print(f'Student {student} ist zugewiesen zu {slot}')
+        print(f'Student {student} is assigned to {slot}')
 
-    print("\nAnzahl der Studenten pro Slot:")
+    print("\nNumber of students per slot:")
     for slot, count in slot_counts.items():
-        print(f'{slot}: {count} Studenten')
+        print(f'{slot}: {count} students')
 
 
 if __name__ == "__main__":

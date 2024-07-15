@@ -45,18 +45,18 @@ def load_and_preprocess_data(file_path):
         # for j, timeslot_id in enumerate(timeslot_ids):
             # original_slot = '_'.join(timeslot_id.split('_')[:-1])
             # pref_value = preferences.get(original_slot, 0)
-            # slot_language = timeslot_languages.get(original_slot, "E")  # Standardmäßig "E", falls nicht vorhanden
-            # cost_matrix[i, j] = 1 if pref_value == 0 else 0  # Basierend auf Slot-Präferenzen
+            # slot_language = timeslot_languages.get(original_slot, "E")
+            # cost_matrix[i, j] = 1 if pref_value == 0 else 0
 
             # Sprachpräferenz berücksichtigen
             # if language_pref.get("E", 0) == 2 and slot_language == "G":
-                # cost_matrix[i, j] += 10  # Hohe Kosten für Englischsprachige, wenn der Slot auf Deutsch ist
+                # cost_matrix[i, j] += 10
             # elif language_pref.get("G", 0) == 2 and slot_language == "E":
-                # cost_matrix[i, j] += 0  # keine Kosten für Deutschsprachige, wenn der Slot auf Englisch ist
+                # cost_matrix[i, j] += 0
 
     return students, timeslots, cost_matrix, student_ids, timeslot_ids
 
-# Beispielhafte Verwendung des Codes
+# Exemplary use of the code
 if __name__ == "__main__":
     benchmark_file = '/Users/hamzazarah/Desktop/Bachelor Arbeit/Daten/Benchmarks/benchmarks/n50-s11-01'
     students, timeslots, cost_matrix, student_ids, timeslot_ids = load_and_preprocess_data(benchmark_file)

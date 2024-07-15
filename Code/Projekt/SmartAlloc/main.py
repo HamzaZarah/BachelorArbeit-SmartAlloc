@@ -33,16 +33,16 @@ def main():
         status = solver.Solve()
 
         if status == pywraplp.Solver.OPTIMAL:
-            print('Optimale Lösung gefunden:')
+            print('Optimal solution found:')
             for student in students:
                 for slot in timeslots:
                     if x[student, slot].solution_value() > 0.5:
-                        print(f'Student {student} ist zugewiesen zu {slot}')
+                        print(f'Student {student} is assigned to {slot}')
         else:
-            print('Keine optimale Lösung gefunden.')
+            print('No optimal solution found.')
 
-        # Ausgabe der Variablenwerte
-        print("\nVariablenwerte:")
+        # Output of the variable values
+        print("\nVariable values:")
         for student in students:
             for slot in timeslots:
                 print(f"x_{student}_{slot}: {x[student, slot].solution_value()}")

@@ -7,7 +7,7 @@ def load_and_preprocess_data(file_path):
 
     students = data['students']
     timeslots = data['timeslots']
-    timeslot_languages = data['timeslot_languages']
+    # timeslot_languages = data['timeslot_languages']
 
     num_students = len(students)
     num_slots = len(timeslots)
@@ -31,33 +31,34 @@ def load_and_preprocess_data(file_path):
     timeslot_ids = expanded_timeslots
 
     # Fill the cost matrix based on student preferences
-    # for i, student in enumerate(student_ids):
-        # preferences = students[student]['slot']
-        # for j, slot in enumerate(timeslot_ids):
-            # original_slot = '_'.join(slot.split('_')[:-1])
-            # pref_value = preferences.get(original_slot, 0)
-            # cost_matrix[i, j] = 1 if pref_value == 0 else 0
-    for i, student_id in enumerate(student_ids):
-        student = students[student_id]
-        preferences = student['slot']
-        language_pref = student['language']
-        for j, timeslot_id in enumerate(timeslot_ids):
-            original_slot = '_'.join(timeslot_id.split('_')[:-1])
+    for i, student in enumerate(student_ids):
+        preferences = students[student]['slot']
+        for j, slot in enumerate(timeslot_ids):
+            original_slot = '_'.join(slot.split('_')[:-1])
             pref_value = preferences.get(original_slot, 0)
-            slot_language = timeslot_languages.get(original_slot, "E")  # Standardmäßig "E", falls nicht vorhanden
-            cost_matrix[i, j] = 1 if pref_value == 0 else 0  # Basierend auf Slot-Präferenzen
+            cost_matrix[i, j] = 1 if pref_value == 0 else 0
+
+    # for i, student_id in enumerate(student_ids):
+        # student = students[student_id]
+        # preferences = student['slot']
+        # language_pref = student['language']
+        # for j, timeslot_id in enumerate(timeslot_ids):
+            # original_slot = '_'.join(timeslot_id.split('_')[:-1])
+            # pref_value = preferences.get(original_slot, 0)
+            # slot_language = timeslot_languages.get(original_slot, "E")  # Standardmäßig "E", falls nicht vorhanden
+            # cost_matrix[i, j] = 1 if pref_value == 0 else 0  # Basierend auf Slot-Präferenzen
 
             # Sprachpräferenz berücksichtigen
-            if language_pref.get("E", 0) == 2 and slot_language == "G":
-                cost_matrix[i, j] += 10  # Hohe Kosten für Englischsprachige, wenn der Slot auf Deutsch ist
-            elif language_pref.get("G", 0) == 2 and slot_language == "E":
-                cost_matrix[i, j] += 0  # keine Kosten für Deutschsprachige, wenn der Slot auf Englisch ist
+            # if language_pref.get("E", 0) == 2 and slot_language == "G":
+                # cost_matrix[i, j] += 10  # Hohe Kosten für Englischsprachige, wenn der Slot auf Deutsch ist
+            # elif language_pref.get("G", 0) == 2 and slot_language == "E":
+                # cost_matrix[i, j] += 0  # keine Kosten für Deutschsprachige, wenn der Slot auf Englisch ist
 
     return students, timeslots, cost_matrix, student_ids, timeslot_ids
 
 # Beispielhafte Verwendung des Codes
 if __name__ == "__main__":
-    benchmark_file = '/Users/hamzazarah/Desktop/Bachelor Arbeit/Code/Projekt/Hungarian Method/n50-s11-01'
+    benchmark_file = '/Users/hamzazarah/Desktop/Bachelor Arbeit/Daten/Benchmarks/benchmarks/n50-s11-01'
     students, timeslots, cost_matrix, student_ids, timeslot_ids = load_and_preprocess_data(benchmark_file)
 
     #np.set_printoptions(threshold=np.inf)

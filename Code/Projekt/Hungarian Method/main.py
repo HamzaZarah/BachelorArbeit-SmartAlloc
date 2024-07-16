@@ -1,5 +1,5 @@
 from data_loader import load_and_preprocess_data
-from hungarian_method import HungarianAlgorithm
+from hungarian_method import hungarian_algorithm
 import numpy as np
 
 def main():
@@ -11,12 +11,9 @@ def main():
     print("Cost Matrix:")
     print(cost_matrix)
 
-    hungarian = HungarianAlgorithm(cost_matrix)
-    hungarian.solve()
+    assignments = hungarian_algorithm(cost_matrix)
 
-    assignments = hungarian.solution.items()
-
-    sorted_assignments = sorted(assignments, key=lambda x: student_ids[x[1]])
+    sorted_assignments = sorted(assignments, key=lambda x: student_ids[x[0]])
 
     print('Optimal solution found:')
     slot_counts = {slot: 0 for slot in timeslot_ids}
@@ -29,7 +26,6 @@ def main():
     print("\nNumber of students per slot:")
     for slot, count in slot_counts.items():
         print(f'{slot}: {count} students')
-
 
 if __name__ == "__main__":
     main()

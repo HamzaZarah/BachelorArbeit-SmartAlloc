@@ -13,6 +13,7 @@ def main():
     # Print the loaded data to check the inputs
     # print("Cost Matrix:")
     # print(cost_matrix)
+    np.set_printoptions(suppress=True)
     min_cost = np.inf
     optimal_assignment = None
     optimal_combination = None

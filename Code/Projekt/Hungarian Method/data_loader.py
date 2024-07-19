@@ -8,7 +8,6 @@ def load_and_preprocess_data(file_path):
 
     students = data['students']
     timeslots = data['timeslots']
-    # languages = ["E", "G"]
 
     num_students = len(students)
     num_slots = len(timeslots)
@@ -26,26 +25,13 @@ def load_and_preprocess_data(file_path):
             expanded_timeslots.append(f"{slot}_{slots_per_timeslot + 1}")
             remaining_students -= 1
 
-    # ok!
-    # cost_matrix = np.zeros((num_students, len(expanded_timeslots)))
-
     student_ids = list(students.keys())
     timeslot_ids = expanded_timeslots
 
-    # Fill the cost matrix based on student preferences
-    # for i, student in enumerate(student_ids):
-        # preferences = students[student]['slot']
-        # for j, slot in enumerate(timeslot_ids):
-            # original_slot = '_'.join(slot.split('_')[:-1])
-            # pref_value = preferences.get(original_slot, 0)
-            # cost_matrix[i, j] = 1 if pref_value == 0 else 0
-
-    # return students, timeslots, cost_matrix, student_ids, timeslot_ids
     return students, timeslots, student_ids, timeslot_ids, expanded_timeslots
 
 def generate_cost_matrix(students, timeslot_ids, language_combination, expanded_timeslots, timeslots):
     num_students = len(students)
-    # num_timeslots = len(timeslot_ids)
     cost_matrix = np.zeros((num_students, len(expanded_timeslots)))
 
     student_ids = list(students.keys())
@@ -59,7 +45,10 @@ def generate_cost_matrix(students, timeslot_ids, language_combination, expanded_
         for j, slot in enumerate(timeslot_ids):
             original_slot = '_'.join(slot.split('_')[:-1])
             pref_value = preferences.get(original_slot, 0)
-            cost_matrix[i, j] = 100 if pref_value == 0 else 0
+            if pref_value == 0:
+                cost_matrix[i, j] += 100 * num_students
+            elif pref_value == 1:
+                cost_matrix[i, j] += 1
 
     # Hinzufügen der Kosten basierend auf Sprachpräferenzen
     for i, student in enumerate(student_ids):
@@ -69,8 +58,10 @@ def generate_cost_matrix(students, timeslot_ids, language_combination, expanded_
             assigned_language = original_slot_languages[original_slot]
             lang_pref_value = language_pref.get(assigned_language, 0)
             # Erhöhe die Kosten, wenn die Sprachpräferenz nicht erfüllt ist
-            if lang_pref_value < 2:
-                cost_matrix[i, j] += 100
+            if lang_pref_value == 0:
+                cost_matrix[i, j] += 100 * num_students
+            elif lang_pref_value == 1:
+                cost_matrix[i, j] += 1
 
     return cost_matrix
 
@@ -84,6 +75,7 @@ if __name__ == "__main__":
     language_combinations = list(itertools.product(['E', 'G'], repeat=len(timeslots)))
 
     # np.set_printoptions(threshold=np.inf)
+    np.set_printoptions(suppress=True)
 
     # print("Cost Matrix:")
     # print(cost_matrix)

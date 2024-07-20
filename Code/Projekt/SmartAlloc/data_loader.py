@@ -7,6 +7,7 @@ def load_and_preprocess_data(file_path):
     students = data['students']
     timeslots = data['timeslots']
     language_preferences = {student_id: details['language'] for student_id, details in students.items()}
+    group_preferences = {student_id: details['group'] for student_id, details in students.items()}
 
     # Convert preferences (0, 1, 2) to availability (0, 1, 1)
     # availability = {}
@@ -32,7 +33,7 @@ def load_and_preprocess_data(file_path):
 
 
     num_students = len(students)
-    return students, timeslots, availability, num_students, language_preferences
+    return students, timeslots, availability, num_students, language_preferences, group_preferences
 
 
 

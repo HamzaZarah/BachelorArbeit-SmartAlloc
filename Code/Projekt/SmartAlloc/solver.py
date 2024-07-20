@@ -52,10 +52,49 @@ def define_constraints(solver, x, students, timeslots, availability, num_student
     # solver.Maximize(solver.Sum(objective_terms))
 
 
-def define_objective(solver, x, students, timeslots, availability, language_preferences):
+def define_objective(solver, x, students, timeslots, availability, language_preferences, group_preferences):
     objective_terms = []
     penalty_terms = []
+    group_bonus_terms = []
+    num_students = len(students)
+    penalty_factor = 100 * num_students
+
     for student in students:
+        for slot in timeslots:
+            availability_score = availability[student][slot]
+            language_preference_score = language_preferences[student][slot]
+
+            # Weighting based on preferences
+            if availability_score == 0:
+                penalty = penalty_factor
+            elif availability_score == 1:
+                penalty = 1
+            else:
+                penalty = 0
+
+            if language_preference_score == 0:
+                penalty += penalty_factor
+            elif language_preference_score == 1:
+                penalty += 1
+
+            weight = 1 - penalty  # Maximize the preference
+            objective_terms.append(weight * x[student, slot])
+
+            # Add penalty terms for non-preferred assignments
+            penalty_terms.append(penalty * x[student, slot])
+
+    # Add group preference bonus terms
+    for student in students:
+        group_preference = group_preferences.get(student, [])
+        for preferred_student in group_preference:
+            if preferred_student in students:
+                for slot in timeslots:
+                    group_bonus_terms.append(0.1 * (x[student, slot] + x[preferred_student, slot]))
+
+    solver.Maximize(solver.Sum(objective_terms) + solver.Sum(group_bonus_terms) - solver.Sum(penalty_terms))
+
+    """ 
+        for student in students:
         for slot in timeslots:
             availability_score = availability[student][slot]
             language_preference_score = language_preferences[student][slot]
@@ -68,5 +107,6 @@ def define_objective(solver, x, students, timeslots, availability, language_pref
                 penalty_terms.append(penalty)
 
     # Ziel ist es, die Summe der Gewichte zu maximieren und die Strafpunkte zu minimieren
-    solver.Maximize(solver.Sum(objective_terms) - solver.Sum(penalty_terms))
+    solver.Maximize(solver.Sum(objective_terms) - solver.Sum(penalty_terms)) 
+    """
 

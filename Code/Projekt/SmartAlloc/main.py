@@ -18,7 +18,7 @@ def main():
     benchmark_file = '/Users/hamzazarah/Desktop/Bachelor Arbeit/Daten/Benchmarks/benchmarks/n50-s11-01'
 
     # students, timeslots, availability, num_students = load_and_preprocess_data(benchmark_file)
-    students, timeslots, availability, num_students, language_preferences = load_and_preprocess_data(benchmark_file)
+    students, timeslots, availability, num_students, language_preferences, group_preferences = load_and_preprocess_data(benchmark_file)
 
     # Print the loaded data to check the inputs
     # print("Students:")
@@ -77,7 +77,8 @@ def main():
             x = define_variables(solver, students, timeslots)
             define_constraints(solver, x, students, timeslots, availability, num_students,
                                adjusted_language_preferences)
-            define_objective(solver, x, students, timeslots, availability, adjusted_language_preferences)
+            define_objective(solver, x, students, timeslots, availability, adjusted_language_preferences,
+                             group_preferences)
             status = solver.Solve()
 
             if status == pywraplp.Solver.OPTIMAL:
@@ -97,6 +98,8 @@ def main():
     for slot in timeslots:
         num_students_assigned = sum(x[student, slot].solution_value() for student in students)
         print(f'Timeslot {slot}: {num_students_assigned} Student(en)')
+
+    print(best_solution_value)
 
 
 if __name__ == "__main__":

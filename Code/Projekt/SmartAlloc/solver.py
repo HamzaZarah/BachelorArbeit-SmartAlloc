@@ -2,6 +2,12 @@ from ortools.linear_solver import pywraplp
 
 
 def create_solver():
+    """
+    Creates a SCIP solver instance.
+
+    Returns:
+        A SCIP solver instance if successful, None otherwise.
+    """
     solver = pywraplp.Solver.CreateSolver('SCIP')
     if not solver:
         return None
@@ -9,6 +15,17 @@ def create_solver():
 
 
 def define_variables(solver, students, timeslots):
+    """
+    Defines boolean variables for each student and timeslot combination.
+
+    Args:
+        solver: The SCIP solver instance.
+        students: A list of student identifiers.
+        timeslots: A list of timeslot identifiers.
+
+    Returns:
+        A dictionary mapping (student, timeslot) pairs to SCIP boolean variables.
+    """
     x = {}
     for student in students:
         for slot in timeslots:
@@ -16,7 +33,22 @@ def define_variables(solver, students, timeslots):
     return x
 
 
-def define_constraints(solver, x, students, timeslots, availability, num_students, language_preferences):
+def define_constraints(solver, x, students, timeslots, availability, num_students, language_preferences,
+                       group_preferences):
+    """
+    Defines the constraints for the solver based on student availability, timeslot capacities,
+    and language preferences.
+
+    Args:
+        solver: The SCIP solver instance.
+        x: The dictionary of decision variables.
+        students: A list of student identifiers.
+        timeslots: A list of timeslot identifiers.
+        availability: A dictionary mapping (student, timeslot) pairs to availability scores.
+        num_students: The total number of students.
+        language_preferences: A dictionary mapping (student, timeslot) pairs to language preference scores.
+        group_preferences: A dictionary mapping students to lists of preferred group members.
+    """
     # Set capacity per slot based on the number of students divided by the number of slots
     capacity_per_slot = num_students // len(timeslots)
     capacities = {slot: capacity_per_slot for slot in timeslots}
@@ -38,21 +70,28 @@ def define_constraints(solver, x, students, timeslots, availability, num_student
             # if language_preferences[student][slot] == 0:
                 # solver.Add(x[student, slot] == 0)
 
+    for student, preferences in group_preferences.items():
+        for peer in preferences:
+            for slot in timeslots:
+                solver.Add(x[student, slot] == x[peer, slot])
+
     for student in students:
         solver.Add(solver.Sum([x[student, slot] for slot in timeslots]) == 1)
 
 
-# def define_objective(solver, x, students, timeslots, availability):
-    # objective_terms = []
-    # for student in students:
-        # for slot in timeslots:
-            # availability_score = availability[student][slot]
-            # weight = 1 if availability_score == 1 else 2 if availability_score == 2 else 0
-            # objective_terms.append(weight * x[student, slot])
-    # solver.Maximize(solver.Sum(objective_terms))
-
-
 def define_objective(solver, x, students, timeslots, availability, language_preferences, group_preferences):
+    """
+    Defines the objective function for the solver to maximize student preferences while minimizing penalties.
+
+    Args:
+        solver: The SCIP solver instance.
+        x: The dictionary of decision variables.
+        students: A list of student identifiers.
+        timeslots: A list of timeslot identifiers.
+        availability: A dictionary mapping (student, timeslot) pairs to availability scores.
+        language_preferences: A dictionary mapping (student, timeslot) pairs to language preference scores.
+        group_preferences: A dictionary mapping students to lists of preferred group members.
+    """
     objective_terms = []
     penalty_terms = []
     group_bonus_terms = []
@@ -93,20 +132,4 @@ def define_objective(solver, x, students, timeslots, availability, language_pref
 
     solver.Maximize(solver.Sum(objective_terms) + solver.Sum(group_bonus_terms) - solver.Sum(penalty_terms))
 
-    """ 
-        for student in students:
-        for slot in timeslots:
-            availability_score = availability[student][slot]
-            language_preference_score = language_preferences[student][slot]
-            weight = language_preference_score * availability_score
-            objective_terms.append(weight * x[student, slot])
-
-            # Hinzufügen von Strafpunkten für nicht erfüllte Sprachpräferenzen
-            if language_preference_score < 2:
-                penalty = (2 - language_preference_score) * x[student, slot]
-                penalty_terms.append(penalty)
-
-    # Ziel ist es, die Summe der Gewichte zu maximieren und die Strafpunkte zu minimieren
-    solver.Maximize(solver.Sum(objective_terms) - solver.Sum(penalty_terms)) 
-    """
 

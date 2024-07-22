@@ -65,10 +65,10 @@ def define_constraints(solver, x, students, timeslots, availability, num_student
         for slot in timeslots:
             solver.Add(x[student, slot] <= availability[student][slot])
 
-    # for student in students:
-        # for slot in timeslots:
-            # if language_preferences[student][slot] == 0:
-                # solver.Add(x[student, slot] == 0)
+    for student in students:
+        for slot in timeslots:
+            if language_preferences[student][slot] == 0:
+                solver.Add(x[student, slot] == 0)
 
     for student, preferences in group_preferences.items():
         for peer in preferences:
@@ -79,7 +79,7 @@ def define_constraints(solver, x, students, timeslots, availability, num_student
         solver.Add(solver.Sum([x[student, slot] for slot in timeslots]) == 1)
 
 
-def define_objective(solver, x, students, timeslots, availability, language_preferences, group_preferences):
+def define_objective(solver, x, students, timeslots, availability, language_preferences):
     """
     Defines the objective function for the solver to maximize student preferences while minimizing penalties.
 
@@ -90,11 +90,9 @@ def define_objective(solver, x, students, timeslots, availability, language_pref
         timeslots: A list of timeslot identifiers.
         availability: A dictionary mapping (student, timeslot) pairs to availability scores.
         language_preferences: A dictionary mapping (student, timeslot) pairs to language preference scores.
-        group_preferences: A dictionary mapping students to lists of preferred group members.
     """
-    objective_terms = []
+    # objective_terms = []
     penalty_terms = []
-    group_bonus_terms = []
     num_students = len(students)
     penalty_factor = 100 * num_students
 
@@ -103,33 +101,19 @@ def define_objective(solver, x, students, timeslots, availability, language_pref
             availability_score = availability[student][slot]
             language_preference_score = language_preferences[student][slot]
 
-            # Weighting based on preferences
+            # Penalty based on preferences
+            penalty = 0
             if availability_score == 0:
-                penalty = penalty_factor
-            elif availability_score == 1:
-                penalty = 1
-            else:
-                penalty = 0
-
-            if language_preference_score == 0:
                 penalty += penalty_factor
-            elif language_preference_score == 1:
+            elif availability_score == 1:
                 penalty += 1
 
-            weight = 1 - penalty  # Maximize the preference
-            objective_terms.append(weight * x[student, slot])
+            if language_preference_score == 1:
+                penalty += 1
 
             # Add penalty terms for non-preferred assignments
             penalty_terms.append(penalty * x[student, slot])
 
-    # Add group preference bonus terms
-    for student in students:
-        group_preference = group_preferences.get(student, [])
-        for preferred_student in group_preference:
-            if preferred_student in students:
-                for slot in timeslots:
-                    group_bonus_terms.append(0.1 * (x[student, slot] + x[preferred_student, slot]))
-
-    solver.Maximize(solver.Sum(objective_terms) + solver.Sum(group_bonus_terms) - solver.Sum(penalty_terms))
+    solver.Minimize(solver.Sum(penalty_terms))
 
 

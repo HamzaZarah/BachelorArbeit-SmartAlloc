@@ -2,7 +2,27 @@ import json
 import numpy as np
 import itertools
 
+
 def load_and_preprocess_data(file_path):
+    """
+    Load data from a JSON file and preprocess it for the scheduling problem.
+
+    This function reads a JSON file containing information about students and timeslots,
+    calculates the number of sub-slots per timeslot based on the number of students and timeslots,
+    and expands the timeslot list accordingly. It returns the processed data including
+    students, timeslots, student IDs, timeslot IDs, and expanded timeslots.
+
+    Parameters:
+    - file_path (str): The path to the JSON file containing the input data.
+
+    Returns:
+    - tuple: A tuple containing:
+        - students (dict): A dictionary of students.
+        - timeslots (list): A list of original timeslots.
+        - student_ids (list): A list of student IDs.
+        - timeslot_ids (list): A list of expanded timeslot IDs.
+        - expanded_timeslots (list): A list of expanded timeslots.
+    """
     with open(file_path, 'r') as f:
         data = json.load(f)
 
@@ -30,13 +50,31 @@ def load_and_preprocess_data(file_path):
 
     return students, timeslots, student_ids, timeslot_ids, expanded_timeslots
 
+
 def generate_cost_matrix(students, timeslot_ids, language_combination, expanded_timeslots, timeslots):
+    """
+    Generate a cost matrix for the scheduling problem based on student preferences and language combinations.
+
+    This function creates a cost matrix where each element represents the cost of assigning a student
+    to a timeslot, taking into account both slot preferences and language preferences. The cost is increased
+    significantly if a preference is not met.
+
+    Parameters:
+    - students (dict): A dictionary of students with their preferences.
+    - timeslot_ids (list): A list of expanded timeslot IDs.
+    - language_combination (tuple): A tuple representing a specific combination of languages for the original timeslots.
+    - expanded_timeslots (list): A list of expanded timeslots.
+    - timeslots (list): A list of original timeslots.
+
+    Returns:
+    - numpy.ndarray: A 2D array representing the cost matrix.
+    """
     num_students = len(students)
     cost_matrix = np.zeros((num_students, len(expanded_timeslots)))
 
     student_ids = list(students.keys())
 
-    # Zuordnung von Sprachen zu original_slots basierend auf der language_combination
+    # Assign languages to original slots based on the language combination
     original_slot_languages = {timeslot: lang for timeslot, lang in zip(timeslots.keys(), language_combination)}
 
     # Fill the cost matrix based on student preferences
@@ -50,14 +88,14 @@ def generate_cost_matrix(students, timeslot_ids, language_combination, expanded_
             elif pref_value == 1:
                 cost_matrix[i, j] += 1
 
-    # Hinzufügen der Kosten basierend auf Sprachpräferenzen
+    # Add costs based on language preferences
     for i, student in enumerate(student_ids):
         language_pref = students[student]['language']
         for j, slot in enumerate(timeslot_ids):
             original_slot = '_'.join(slot.split('_')[:-1])
             assigned_language = original_slot_languages[original_slot]
             lang_pref_value = language_pref.get(assigned_language, 0)
-            # Erhöhe die Kosten, wenn die Sprachpräferenz nicht erfüllt ist
+            # Increase the cost if the language preference is not met
             if lang_pref_value == 0:
                 cost_matrix[i, j] += 100 * num_students
             elif lang_pref_value == 1:
@@ -69,16 +107,11 @@ def generate_cost_matrix(students, timeslot_ids, language_combination, expanded_
 # Exemplary use of the code
 if __name__ == "__main__":
     benchmark_file = '/Users/hamzazarah/Desktop/Bachelor Arbeit/Daten/Benchmarks/benchmarks/n50-s11-01'
-    # students, timeslots, cost_matrix, student_ids, timeslot_ids = load_and_preprocess_data(benchmark_file)
     students, timeslots, student_ids, timeslot_ids, expanded_timeslots = load_and_preprocess_data(benchmark_file)
-
     language_combinations = list(itertools.product(['E', 'G'], repeat=len(timeslots)))
-
     # np.set_printoptions(threshold=np.inf)
     np.set_printoptions(suppress=True)
 
-    # print("Cost Matrix:")
-    # print(cost_matrix)
     print("Student IDs:", student_ids)
     print("Timeslot IDs:", timeslot_ids)
     # print("Number of students:", len(students))

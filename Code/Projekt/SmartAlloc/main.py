@@ -66,7 +66,8 @@ def main():
     # Use the correct path to your JSON file
     benchmark_file = '/Users/hamzazarah/Desktop/Bachelor Arbeit/Daten/Benchmarks/benchmarks/n50-s11-01'
     # Load data from the benchmark file
-    students, timeslots, availability, num_students, language_preferences, group_preferences = load_and_preprocess_data(benchmark_file)
+    students, timeslots, availability, num_students, language_preferences, group_preferences = (
+        load_and_preprocess_data(benchmark_file))
 
     languages = ['E', 'G']  # Define the languages to consider
     best_solution_value = float('inf')
@@ -76,7 +77,7 @@ def main():
     # Iterate over all possible language combinations
     for language_combination in itertools.product(languages, repeat=len(timeslots)):
         if not is_combination_feasible(language_preferences, language_combination, timeslots):
-            # print(f"Skipping infeasible language combination: {language_combination}")
+            print(f"The problem is infeasible for {language_combination}")
             continue
 
         adjusted_language_preferences = adjust_language_preferences(language_preferences, language_combination,
@@ -102,13 +103,13 @@ def main():
                 print('The problem does not have an optimal solution.')
 
     # Output the number of students assigned to each timeslot
-    print(f'Beste Sprachkombination: {best_combination}')
-    print('Optimale Zuweisung:')
+    print(f'Best language combination: {best_combination}')
+    print('Optimal assignment:')
     for student, slot in best_assignment:
-        print(f'Student {student} ist dem Timeslot {slot} zugewiesen')
+        print(f'Student {student} is assigned to the timeslot {slot}')
 
     # Output the number of students assigned to each timeslot
-    print('\nAnzahl der Studenten pro Timeslot:')
+    print('\nNumber of students per timeslot:')
     for slot in timeslots:
         num_students_assigned = sum(1 for student, assigned_slot in best_assignment if assigned_slot == slot)
         print(f'Timeslot {slot}: {num_students_assigned} Student(en)')

@@ -53,6 +53,11 @@ def main():
             optimal_assignment = assignments
             optimal_combination = combination
 
+    formatted_assignment = [
+        (student_ids[student_idx], timeslot_ids[timeslot_idx].rsplit('_', 1)[0])
+        for student_idx, timeslot_idx in optimal_assignment
+    ]
+
     # Output the optimal assignment and language combination
     print(f'Optimal assignment for language combination {optimal_combination} with total costs {min_cost}:')
     for student_idx, timeslot_idx in optimal_assignment:
@@ -64,7 +69,7 @@ def main():
     solve_time = end_time - start_time
 
     # print(best_solution_value)
-    print(f"Assignment: {optimal_assignment}")
+    print(f"Assignment: {formatted_assignment}")
     print(f"Total cost: {min_cost}")
     print(f"Solve time: {solve_time}s")
 

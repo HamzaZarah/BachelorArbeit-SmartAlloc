@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+import argparse
 import itertools
 import logging
 import os
@@ -67,8 +68,12 @@ def main():
     """
     logging.basicConfig(level=logging.CRITICAL)
     # Use the correct path to your JSON file
-    benchmark_file = os.path.join(os.path.expanduser('~'), 'Desktop', 'Bachelor Arbeit', 'Code', 'Projekt',
-                                  'benchmarks', 'n50-s11-01')
+    # benchmark_file = os.path.join(os.path.expanduser('~'), 'Desktop', 'Bachelor Arbeit', 'Code', 'Projekt',
+    # 'benchmarks', 'n50-s11-01')
+    parser = (argparse.ArgumentParser(description='Solve the SmartAlloc problem.'))
+    parser.add_argument('benchmark_file', type=str, help='Path to the benchmark file containing student and timeslot data.')
+    args = parser.parse_args()
+    benchmark_file = args.benchmark_file
     # Load data from the benchmark file
     students, timeslots, availability, num_students, language_preferences, group_preferences = (
         load_and_preprocess_data(benchmark_file))

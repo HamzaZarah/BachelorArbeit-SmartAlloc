@@ -6,6 +6,7 @@ import numpy as np
 import itertools
 import os
 import time
+import argparse
 
 
 def main():
@@ -18,10 +19,14 @@ def main():
     for each language combination in each timeslot. The script outputs the optimal language combination
     and the assignment of students to timeslots with the minimum total cost.
     """
+    parser = argparse.ArgumentParser(description="Run the Hungarian method on a benchmark file.")
+    parser.add_argument("benchmark_file", type=str, help="Path to the benchmark file")
+    args = parser.parse_args()
     start_time = time.time()
     # Path to the benchmark file containing student and timeslot data
-    benchmark_file = os.path.join(os.path.expanduser('~'), 'Desktop', 'Bachelor Arbeit', 'Code', 'Projekt',
-                                  'benchmarks', 'n50-s11-01')
+    # benchmark_file = os.path.join(os.path.expanduser('~'), 'Desktop', 'Bachelor Arbeit', 'Code', 'Projekt',
+    # 'benchmarks', 'n50-s11-01')
+    benchmark_file = args.benchmark_file
     # Load data from the benchmark file and preprocess it
     students, timeslots, student_ids, timeslot_ids, expanded_timeslots = load_and_preprocess_data(benchmark_file)
     # Generate all possible language combinations for the timeslots

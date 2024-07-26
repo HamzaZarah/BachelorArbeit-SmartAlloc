@@ -1,6 +1,9 @@
+#! /usr/bin/env python
+
 import itertools
 import logging
-from data_loader import load_and_preprocess_data
+import os
+from data_loader_smartalloc import load_and_preprocess_data
 from solver import create_solver, define_variables, define_constraints, define_objective
 from ortools.linear_solver import pywraplp
 
@@ -64,7 +67,8 @@ def main():
     """
     logging.basicConfig(level=logging.CRITICAL)
     # Use the correct path to your JSON file
-    benchmark_file = '/Users/hamzazarah/Desktop/Bachelor Arbeit/Daten/Benchmarks/benchmarks/n50-s11-01'
+    benchmark_file = os.path.join(os.path.expanduser('~'), 'Desktop', 'Bachelor Arbeit', 'Code', 'Projekt',
+                                  'benchmarks', 'n50-s11-01')
     # Load data from the benchmark file
     students, timeslots, availability, num_students, language_preferences, group_preferences = (
         load_and_preprocess_data(benchmark_file))
@@ -77,7 +81,7 @@ def main():
     # Iterate over all possible language combinations
     for language_combination in itertools.product(languages, repeat=len(timeslots)):
         if not is_combination_feasible(language_preferences, language_combination, timeslots):
-            print(f"The problem is infeasible for {language_combination}")
+             # print(f"The problem is infeasible for {language_combination}")
             continue
 
         adjusted_language_preferences = adjust_language_preferences(language_preferences, language_combination,
@@ -97,24 +101,31 @@ def main():
                     best_combination = language_combination
                     best_assignment = [(student, slot) for student in students for slot in timeslots if
                                        x[student, slot].solution_value() == 1]
-            elif status == pywraplp.Solver.INFEASIBLE:
-                print(f"The problem is infeasible for {language_combination}.")
-            else:
-                print('The problem does not have an optimal solution.')
+            # elif status == pywraplp.Solver.INFEASIBLE:
+                # print(f"The problem is infeasible for {language_combination}.")
+            # else:
+                # print('The problem does not have an optimal solution.')
 
     # Output the number of students assigned to each timeslot
+    '''
     print(f'Best language combination: {best_combination}')
     print('Optimal assignment:')
     for student, slot in best_assignment:
         print(f'Student {student} is assigned to the timeslot {slot}')
+    '''
 
     # Output the number of students assigned to each timeslot
+    '''
     print('\nNumber of students per timeslot:')
     for slot in timeslots:
         num_students_assigned = sum(1 for student, assigned_slot in best_assignment if assigned_slot == slot)
         print(f'Timeslot {slot}: {num_students_assigned} Student(en)')
+    '''
 
-    print(best_solution_value)
+    # print(best_solution_value)
+    print(f"Assignment: {best_assignment}")
+    print(f"Total cost: {best_solution_value}")
+    print(f"Solve time: {solver.WallTime()}s")
 
 
 if __name__ == "__main__":

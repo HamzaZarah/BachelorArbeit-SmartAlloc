@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+
 from ortools.linear_solver import pywraplp
 
 
@@ -63,7 +65,8 @@ def define_constraints(solver, x, students, timeslots, availability, num_student
 
     for student in students:
         for slot in timeslots:
-            solver.Add(x[student, slot] <= availability[student][slot])
+            if availability[student][slot] == 0:
+                solver.Add(x[student, slot] == 0)
 
     for student in students:
         for slot in timeslots:
@@ -103,9 +106,7 @@ def define_objective(solver, x, students, timeslots, availability, language_pref
 
             # Penalty based on preferences
             penalty = 0
-            if availability_score == 0:
-                penalty += penalty_factor
-            elif availability_score == 1:
+            if availability_score == 1:
                 penalty += 1
 
             if language_preference_score == 1:

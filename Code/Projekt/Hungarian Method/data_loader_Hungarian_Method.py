@@ -1,6 +1,9 @@
+#! /usr/bin/env python
+
 import json
 import numpy as np
 import itertools
+import os
 
 
 def load_and_preprocess_data(file_path):
@@ -106,7 +109,8 @@ def generate_cost_matrix(students, timeslot_ids, language_combination, expanded_
 
 # Exemplary use of the code
 if __name__ == "__main__":
-    benchmark_file = '/Users/hamzazarah/Desktop/Bachelor Arbeit/Daten/Benchmarks/benchmarks/n50-s11-01'
+    benchmark_file = os.path.join(os.path.expanduser('~'), 'Desktop', 'Bachelor Arbeit', 'Code', 'Projekt', 'benchmarks',
+                                  'n50-s11-01')
     students, timeslots, student_ids, timeslot_ids, expanded_timeslots = load_and_preprocess_data(benchmark_file)
     language_combinations = list(itertools.product(['E', 'G'], repeat=len(timeslots)))
     # np.set_printoptions(threshold=np.inf)

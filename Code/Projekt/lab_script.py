@@ -22,7 +22,7 @@ from lab.reports import Attribute
 
 # Custom report class to include specific information and error attributes in the report.
 class BaseReport(AbsoluteReport):
-    INFO_ATTRIBUTES = ["time_limit", "memory_limit", "seed"]  # Attributes to be included in the report's info section.
+    INFO_ATTRIBUTES = ["time_limit", "memory_limit"]  # Attributes to be included in the report's info section.
     ERROR_ATTRIBUTES = [
         "domain",  # Domain of the problem consisting of students?
         "problem",  # The problem consisting of students and time slots?
@@ -38,9 +38,8 @@ NODE = platform.node()
 REMOTE = NODE.endswith(".scicore.unibas.ch") or NODE.endswith(".cluster.bc2.ch")
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))  # Directory of the script.
 BENCHMARKS_DIR = os.path.join(SCRIPT_DIR, "benchmarks")  # Directory containing benchmark files.
-BENCHMARKS = sorted(glob.glob(os.path.join(BENCHMARKS_DIR, "*.json")))  # List of benchmark files.
+BENCHMARKS = sorted(glob.glob(os.path.join(BENCHMARKS_DIR, "*-01")))  # List of benchmark files.
 ALGORITHMS = ["smartalloc", "hungarian"]  # Algorithms to be used in the experiment.
-SEED = 2023  # Seed for random number generation.
 TIME_LIMIT = 1800  # Time limit for each run in seconds.
 MEMORY_LIMIT = 4000  # Memory limit for each run in megabytes.
 
@@ -121,8 +120,12 @@ def make_parser():
 # Create a new experiment.
 exp = Experiment(environment=ENV)
 # Add solver to experiment and make it available to all runs.
-exp.add_resource("solver_smartalloc", os.path.join(SCRIPT_DIR, "SmartAlloc/solver.py"))
-exp.add_resource("solver_hungarian", os.path.join(SCRIPT_DIR, "Hungarian Method/hungarian_method.py"))
+exp.add_resource("solver_smartalloc", "SmartAlloc/main_smartalloc.py")
+exp.add_resource("data_loader_smartalloc", "SmartAlloc/data_loader_smartalloc.py")
+exp.add_resource("solver", "SmartAlloc/solver.py")
+exp.add_resource("solver_hungarian", "Hungarian Method/main_hungarian_method.py")
+exp.add_resource("data_loader_hungarian", "Hungarian Method/data_loader_Hungarian_Method.py")
+exp.add_resource("hungarian_method", "Hungarian Method/hungarian_method.py")
 # Add custom parser.
 exp.add_parser(make_parser())
 
@@ -130,10 +133,10 @@ for algo in ALGORITHMS:
     for task in SUITE:
         run = exp.add_run()
         run.add_resource("task", task, symlink=True)
-        solver_file = "solver_smartalloc" if algo == "solver.py" else "solver_hungarian"
+        solver_file = "solver_smartalloc" if algo == "smartalloc" else "solver_hungarian"
         run.add_command(
             "solve",
-            ["{" + solver_file + "}", "--seed", str(SEED), "{task}"],
+            ["{" + solver_file + "}", "{task}"],
             time_limit=TIME_LIMIT,
             memory_limit=MEMORY_LIMIT,
         )
@@ -144,7 +147,6 @@ for algo in ALGORITHMS:
         run.set_property("algorithm", algo)
         run.set_property("time_limit", TIME_LIMIT)
         run.set_property("memory_limit", MEMORY_LIMIT)
-        run.set_property("seed", SEED)
         run.set_property("id", [algo, domain, task_name])
 
 # Add step that writes experiment files to disk.

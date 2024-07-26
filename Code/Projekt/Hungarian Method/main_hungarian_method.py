@@ -1,7 +1,11 @@
-from data_loader import load_and_preprocess_data, generate_cost_matrix
+#! /usr/bin/env python
+
+from data_loader_Hungarian_Method import load_and_preprocess_data, generate_cost_matrix
 from hungarian_method import hungarian_algorithm
 import numpy as np
 import itertools
+import os
+import time
 
 
 def main():
@@ -14,8 +18,10 @@ def main():
     for each language combination in each timeslot. The script outputs the optimal language combination
     and the assignment of students to timeslots with the minimum total cost.
     """
+    start_time = time.time()
     # Path to the benchmark file containing student and timeslot data
-    benchmark_file = '/Users/hamzazarah/Desktop/Bachelor Arbeit/Daten/Benchmarks/benchmarks/n50-s11-01'
+    benchmark_file = os.path.join(os.path.expanduser('~'), 'Desktop', 'Bachelor Arbeit', 'Code', 'Projekt',
+                                  'benchmarks', 'n50-s11-01')
     # Load data from the benchmark file and preprocess it
     students, timeslots, student_ids, timeslot_ids, expanded_timeslots = load_and_preprocess_data(benchmark_file)
     # Generate all possible language combinations for the timeslots
@@ -48,6 +54,14 @@ def main():
         student = student_ids[student_idx]
         timeslot = timeslot_ids[timeslot_idx]
         print(f'Student {student} is assigned to the timeslot {timeslot}.')
+
+    end_time = time.time()
+    solve_time = end_time - start_time
+
+    # print(best_solution_value)
+    print(f"Assignment: {optimal_assignment}")
+    print(f"Total cost: {min_cost}")
+    print(f"Solve time: {solve_time}s")
 
 
 if __name__ == "__main__":

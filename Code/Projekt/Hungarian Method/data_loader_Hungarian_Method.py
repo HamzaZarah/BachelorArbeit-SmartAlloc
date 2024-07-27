@@ -51,6 +51,12 @@ def load_and_preprocess_data(file_path):
     student_ids = list(students.keys())
     timeslot_ids = expanded_timeslots
 
+    # Update preferences: Set all preferences to 2 if they are all 0
+    for student_id, details in students.items():
+        preferences = details['slot']
+        if all(pref == 0 for pref in preferences.values()):
+            students[student_id]['slot'] = {slot: 2 for slot in preferences.keys()}
+
     return students, timeslots, student_ids, timeslot_ids, expanded_timeslots
 
 
@@ -104,16 +110,20 @@ def generate_cost_matrix(students, timeslot_ids, language_combination, expanded_
             elif lang_pref_value == 1:
                 cost_matrix[i, j] += 1
 
+        # Debug: Print the cost matrix for each combination
+    # print(f"Cost Matrix for combination {language_combination}:")
+    # print(cost_matrix)
+
     return cost_matrix
 
 
 # Exemplary use of the code
 if __name__ == "__main__":
     benchmark_file = os.path.join(os.path.expanduser('~'), 'Desktop', 'Bachelor Arbeit', 'Code', 'Projekt', 'benchmarks',
-                                  'n50-s11-01')
+                                  'n100-s11-01')
     students, timeslots, student_ids, timeslot_ids, expanded_timeslots = load_and_preprocess_data(benchmark_file)
     language_combinations = list(itertools.product(['E', 'G'], repeat=len(timeslots)))
-    # np.set_printoptions(threshold=np.inf)
+    np.set_printoptions(threshold=np.inf)
     np.set_printoptions(suppress=True)
 
     print("Student IDs:", student_ids)

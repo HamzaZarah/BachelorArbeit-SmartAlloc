@@ -108,10 +108,10 @@ def make_parser():
 
     vc_parser = Parser()
     vc_parser.add_pattern("node", r"node: (.+)\n", type=str, file="driver.log", required=True)
-    vc_parser.add_pattern("solver_exit_code", r"solve exit code: (.+)\n", type=int, file="driver.log")
-    vc_parser.add_pattern("assignment", r"Assignment: (\[.*\])", type=str)
-    vc_parser.add_pattern("total_cost", r"Total cost: (.+)\n", type=float)
-    vc_parser.add_pattern("solve_time", r"Solve time: (.+)s", type=float)
+    vc_parser.add_pattern("solver_exit_code", r"solve exit code: (.+)\n", type=int, file="driver.log", required=True)
+    vc_parser.add_pattern("assignment", r"Assignment: (\[.*\])", type=str, file="solver.log", required=True)
+    vc_parser.add_pattern("total_cost", r"Total cost: (.+)\n", type=float, file="solver.log", required=True)
+    vc_parser.add_pattern("solve_time", r"Solve time: (.+)s", type=float, file="solver.log", required=True)
     vc_parser.add_function(solved)
     vc_parser.add_function(error)
     return vc_parser

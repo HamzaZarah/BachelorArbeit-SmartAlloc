@@ -86,7 +86,6 @@ def main():
     # Iterate over all possible language combinations
     for language_combination in itertools.product(languages, repeat=len(timeslots)):
         if not is_combination_feasible(language_preferences, language_combination, timeslots):
-            best_solution_value = None
             # print(f"The problem is infeasible for {language_combination}")
             continue
 
@@ -109,7 +108,6 @@ def main():
                                        x[student, slot].solution_value() == 1]
             elif status == pywraplp.Solver.INFEASIBLE:
                 print(f"The problem is infeasible for {language_combination}.")
-                best_solution_value = None
             else:
                 print('The problem does not have an optimal solution.')
 

@@ -161,7 +161,7 @@ exp.add_step("parse", exp.parse)
 # Add step that collects properties from run directories and writes them to *-eval/properties.
 exp.add_fetcher(name="fetch")
 
-# Make a report.
+# Make a report of the results.
 exp.add_report(BaseReport(attributes=ATTRIBUTES), outfile="report.html")
 
 # Parse the commandline and run the given steps.

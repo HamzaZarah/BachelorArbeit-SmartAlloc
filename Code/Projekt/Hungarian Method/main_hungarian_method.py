@@ -59,11 +59,11 @@ def main():
     ]
 
     # Output the optimal assignment and language combination
-    print(f'Optimal assignment for language combination {optimal_combination} with total costs {min_cost}:')
-    for student_idx, timeslot_idx in optimal_assignment:
-        student = student_ids[student_idx]
-        timeslot = timeslot_ids[timeslot_idx]
-        print(f'Student {student} is assigned to the timeslot {timeslot}.')
+    # print(f'Optimal assignment for language combination {optimal_combination} with total costs {min_cost}:')
+    # for student_idx, timeslot_idx in optimal_assignment:
+        # student = student_ids[student_idx]
+        # timeslot = timeslot_ids[timeslot_idx]
+        # print(f'Student {student} is assigned to the timeslot {timeslot}.')
 
     end_time = time.time()
     solve_time = end_time - start_time

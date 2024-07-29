@@ -11,7 +11,7 @@ and generating a report of the results.
 import glob
 import os
 import platform
-
+import sys
 
 from downward.reports.absolute import AbsoluteReport
 from lab.environments import BaselSlurmEnvironment, LocalEnvironment
@@ -136,7 +136,7 @@ for algo in ALGORITHMS:
         solver_file = "solver_smartalloc" if algo == "smartalloc" else "solver_hungarian"
         run.add_command(
             "solve",
-            ["{" + solver_file + "}", "{task}"],
+            [sys.executable, "{" + solver_file + "}", "{task}"],
             time_limit=TIME_LIMIT,
             memory_limit=MEMORY_LIMIT,
         )

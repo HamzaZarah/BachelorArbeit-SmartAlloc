@@ -86,7 +86,8 @@ def main():
     # Iterate over all possible language combinations
     for language_combination in itertools.product(languages, repeat=len(timeslots)):
         if not is_combination_feasible(language_preferences, language_combination, timeslots):
-             # print(f"The problem is infeasible for {language_combination}")
+            best_solution_value = None
+            print(f"The problem is infeasible for {language_combination}")
             continue
 
         adjusted_language_preferences = adjust_language_preferences(language_preferences, language_combination,
@@ -106,26 +107,27 @@ def main():
                     best_combination = language_combination
                     best_assignment = [(student, slot) for student in students for slot in timeslots if
                                        x[student, slot].solution_value() == 1]
-            # elif status == pywraplp.Solver.INFEASIBLE:
-                # print(f"The problem is infeasible for {language_combination}.")
-            # else:
-                # print('The problem does not have an optimal solution.')
+            elif status == pywraplp.Solver.INFEASIBLE:
+                print(f"The problem is infeasible for {language_combination}.")
+                best_solution_value = None
+            else:
+                print('The problem does not have an optimal solution.')
 
     # Output the number of students assigned to each timeslot
-    '''
+
     print(f'Best language combination: {best_combination}')
     print('Optimal assignment:')
     for student, slot in best_assignment:
         print(f'Student {student} is assigned to the timeslot {slot}')
-    '''
+
 
     # Output the number of students assigned to each timeslot
-    '''
+
     print('\nNumber of students per timeslot:')
     for slot in timeslots:
         num_students_assigned = sum(1 for student, assigned_slot in best_assignment if assigned_slot == slot)
         print(f'Timeslot {slot}: {num_students_assigned} Student(en)')
-    '''
+
 
     # print(best_solution_value)
     print(f"Assignment: {best_assignment}")

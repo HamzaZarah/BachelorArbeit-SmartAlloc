@@ -118,14 +118,12 @@ def main():
     # for student, slot in best_assignment:
         # print(f'Student {student} is assigned to the timeslot {slot}')
 
-
     # Output the number of students assigned to each timeslot
 
-    print('\nNumber of students per timeslot:')
-    for slot in timeslots:
-        num_students_assigned = sum(1 for student, assigned_slot in best_assignment if assigned_slot == slot)
-        print(f'Timeslot {slot}: {num_students_assigned} Student(en)')
-
+    # print('\nNumber of students per timeslot:')
+    # for slot in timeslots:
+        # num_students_assigned = sum(1 for student, assigned_slot in best_assignment if assigned_slot == slot)
+        # print(f'Timeslot {slot}: {num_students_assigned} Student(en)')
 
     # print(best_solution_value)
     if best_solution_value != float('inf'):

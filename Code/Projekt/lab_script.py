@@ -12,7 +12,6 @@ import glob
 import os
 import platform
 import sys
-import logging
 
 from downward.reports.absolute import AbsoluteReport
 from lab.environments import BaselSlurmEnvironment, LocalEnvironment
@@ -149,8 +148,6 @@ for algo in ALGORITHMS:
         run.set_property("time_limit", TIME_LIMIT)
         run.set_property("memory_limit", MEMORY_LIMIT)
         run.set_property("id", [algo, domain, task_name])
-
-        logging.debug(f"Run added for algorithm: {algo}, task: {task_name}")
 
 # Add step that writes experiment files to disk.
 exp.add_step("build", exp.build)

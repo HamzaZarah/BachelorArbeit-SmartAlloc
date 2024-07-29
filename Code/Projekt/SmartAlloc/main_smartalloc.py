@@ -113,10 +113,10 @@ def main():
 
     # Output the number of students assigned to each timeslot
 
-    print(f'Best language combination: {best_combination}')
-    print('Optimal assignment:')
-    for student, slot in best_assignment:
-        print(f'Student {student} is assigned to the timeslot {slot}')
+    # print(f'Best language combination: {best_combination}')
+    # print('Optimal assignment:')
+    # for student, slot in best_assignment:
+        # print(f'Student {student} is assigned to the timeslot {slot}')
 
 
     # Output the number of students assigned to each timeslot
@@ -124,12 +124,14 @@ def main():
     print('\nNumber of students per timeslot:')
     for slot in timeslots:
         num_students_assigned = sum(1 for student, assigned_slot in best_assignment if assigned_slot == slot)
-        rint(f'Timeslot {slot}: {num_students_assigned} Student(en)')
+        print(f'Timeslot {slot}: {num_students_assigned} Student(en)')
 
 
     # print(best_solution_value)
+    if best_solution_value != float('inf'):
+        print(f"Total cost: {best_solution_value}")
+
     print(f"Assignment: {best_assignment}")
-    print(f"Total cost: {best_solution_value}")
     print(f"Solve time: {solver.WallTime()}s")
 
 

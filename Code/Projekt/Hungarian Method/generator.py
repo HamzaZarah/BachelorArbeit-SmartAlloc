@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import math
 import random
 import json
 
@@ -81,24 +82,49 @@ def generate(name, num_students, slot_weights, preteam_dist, language_pref, slot
     with open(name, 'w', encoding='utf-8') as f:
         json.dump(out, f, ensure_ascii=False, sort_keys=True, indent=2)
         
-#generate(name, num_students, slot_weights, preteam_dist, language_pref, slot_pref):
 
+def get_slots(num_students):
+    num_slots = math.ceil(num_students / 60)
+    slots = [1,1]
+    for i in range(2,num_slots):
+        rn_new_slot = random.randint(0, len(slots))
+        if rn_new_slot == len(slots):
+            slots.append(1)
+        else:
+            slots[rn_new_slot] += 1
+    return slots
+
+# pref types:
+# 0: all slots have the same "normal" distribution
+# 1: one slot is preferred, one disliked, rest normal
+# 2: one slot is extremely preferred, one extremely disliked, rest normal
+prefs = {
+  "p+": [0.05, 0.15, 0.8],
+  "p" : [0.1, 0.3, 0.6],
+  "n" : [0.3, 0.4, 0.3],
+  "d" : [0.6, 0.3, 0.1],
+  "d+": [0.8, 0.15, 0.05]
+}
+def get_slot_prefs(num_slots, pref_type):
+    slot_prefs = [prefs["n"]]*num_slots
+    if pref_type == 1:
+        slot_prefs[0] = prefs["p"]
+        slot_prefs[1] = prefs["d"]
+    elif pref_type == 2:
+        slot_prefs[0] = prefs["p+"]
+        slot_prefs[1] = prefs["d+"]
+    random.shuffle(slot_prefs)
+    return slot_prefs
+          
 def main():
-    generate("n50-s11-01", 50, [1,1], [0.75, 0.25], [0.05, 0.35, 0.35, 0.25], [[0.5, 0.2, 0.3],[0.1, 0.2, 0.7]])
-    generate("n60-s11-01", 60, [1,1], [0.75, 0.25], [0.05, 0.35, 0.35, 0.25], [[0.5, 0.2, 0.3],[0.1, 0.2, 0.7]])
-    generate("n70-s11-01", 70, [1,1], [0.75, 0.25], [0.05, 0.35, 0.35, 0.25], [[0.5, 0.2, 0.3],[0.1, 0.2, 0.7]])
-    generate("n80-s11-01", 80, [1,2], [0.75, 0.25], [0.05, 0.35, 0.35, 0.25], [[0.5, 0.2, 0.3],[0.1, 0.2, 0.7]])
-    generate("n90-s11-01", 90, [1,2], [0.75, 0.25], [0.05, 0.35, 0.35, 0.25], [[0.5, 0.2, 0.3],[0.1, 0.2, 0.7]])
-    generate("n100-s11-01", 100, [1,2], [0.75, 0.25], [0.05, 0.35, 0.35, 0.25], [[0.5, 0.2, 0.3],[0.1, 0.2, 0.7]])
-    generate("n110-s11-01", 110, [1,1,2], [0.75, 0.25], [0.05, 0.35, 0.35, 0.25], [[0.5, 0.2, 0.3],[0.1, 0.2, 0.7],[0.2,0.4,0.4]])
-    generate("n120-s11-01", 120, [1,1,2], [0.75, 0.25], [0.05, 0.35, 0.35, 0.25], [[0.5, 0.2, 0.3],[0.1, 0.2, 0.7],[0.2,0.4,0.4]])
-    generate("n130-s11-01", 130, [1,1,2], [0.75, 0.25], [0.05, 0.35, 0.35, 0.25], [[0.5, 0.2, 0.3],[0.1, 0.2, 0.7],[0.2,0.4,0.4]])
-    generate("n140-s11-01", 140, [1,1,3], [0.75, 0.25], [0.05, 0.35, 0.35, 0.25], [[0.5, 0.2, 0.3],[0.1, 0.2, 0.7],[0.2,0.4,0.4]])
-    generate("n150-s11-01", 150, [1,1,3], [0.75, 0.25], [0.05, 0.35, 0.35, 0.25], [[0.5, 0.2, 0.3],[0.1, 0.2, 0.7],[0.2,0.4,0.4]])
-    generate("n160-s11-01", 160, [1,1,3], [0.75, 0.25], [0.05, 0.35, 0.35, 0.25], [[0.5, 0.2, 0.3],[0.1, 0.2, 0.7],[0.2,0.4,0.4]])
-    generate("n170-s11-01", 170, [1,2,3], [0.75, 0.25], [0.05, 0.35, 0.35, 0.25], [[0.5, 0.2, 0.3],[0.1, 0.2, 0.7],[0.2,0.4,0.4]])
-    generate("n180-s11-01", 180, [1,2,3], [0.75, 0.25], [0.05, 0.35, 0.35, 0.25], [[0.5, 0.2, 0.3],[0.1, 0.2, 0.7],[0.2,0.4,0.4]])
-    generate("n190-s11-01", 190, [1,2,3], [0.75, 0.25], [0.05, 0.35, 0.35, 0.25], [[0.5, 0.2, 0.3],[0.1, 0.2, 0.7],[0.2,0.4,0.4]])
-    generate("n200-s11-01", 200, [1,2,3], [0.75, 0.25], [0.05, 0.35, 0.35, 0.25], [[0.5, 0.2, 0.3],[0.1, 0.2, 0.7],[0.2,0.4,0.4]])
+    for n in [50, 60, 70, 80, 90, 100, 125, 150, 175, 200, 300, 400, 500, 750, 1000, 1500, 2000]:
+        for pref_type in [0,1,2]:
+            for i in range(10):
+                slots = get_slots(n)
+                slot_prefs = get_slot_prefs(len(slots), pref_type)
+                generate(f"n{n}-p{pref_type}-{i}",
+                         n, slots, [0.75, 0.25], [0.05, 0.35, 0.35, 0.25],
+                         slot_prefs)
+
 if __name__ == "__main__":
     main()

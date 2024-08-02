@@ -3,6 +3,7 @@
 import argparse
 import itertools
 import logging
+import time
 import os
 from data_loader_smartalloc import load_and_preprocess_data
 from solver import create_solver, define_variables, define_constraints, define_objective
@@ -66,6 +67,7 @@ def main():
     Main function to find the optimal assignment of students to timeslots based on timeslot, language and group
     preferences.
     """
+    start_time = time.time()
     logging.basicConfig(level=logging.CRITICAL)
     # Use the correct path to your JSON file
     # benchmark_file = os.path.join(os.path.expanduser('~'), 'Desktop', 'Bachelor Arbeit', 'Code', 'Projekt',
@@ -126,11 +128,15 @@ def main():
         # print(f'Timeslot {slot}: {num_students_assigned} Student(en)')
 
     # print(best_solution_value)
+
+    end_time = time.time()
+    solve_time = end_time - start_time
+
     if best_solution_value != float('inf'):
         print(f"Total cost: {best_solution_value}")
 
     print(f"Assignment: {best_assignment}")
-    print(f"Solve time: {solver.WallTime()}s")
+    print(f"Solve time: {solve_time}s")
 
 
 if __name__ == "__main__":

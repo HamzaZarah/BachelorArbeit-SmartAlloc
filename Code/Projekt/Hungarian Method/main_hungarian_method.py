@@ -27,10 +27,14 @@ def main():
     # benchmark_file = os.path.join(os.path.expanduser('~'), 'Desktop', 'Bachelor Arbeit', 'Code', 'Projekt',
     # 'benchmarks', 'n50-s11-01')
     benchmark_file = args.benchmark_file
-    # Load data from the benchmark file and preprocess it
-    students, timeslots, student_ids, timeslot_ids, expanded_timeslots = load_and_preprocess_data(benchmark_file)
-    # Generate all possible language combinations for the timeslots
-    language_combinations = list(itertools.product(['E', 'G'], repeat=len(timeslots)))
+    try:
+        # Load data from the benchmark file and preprocess it
+        students, timeslots, student_ids, timeslot_ids, expanded_timeslots = load_and_preprocess_data(benchmark_file)
+        # Generate all possible language combinations for the timeslots
+        language_combinations = list(itertools.product(['E', 'G'], repeat=len(timeslots)))
+    except MemoryError:
+        print("MemoryError: The number of timeslots is too large to handle all language combinations in memory.")
+        return
 
     # Set initial minimum cost to infinity and optimal assignment to None
     np.set_printoptions(suppress=True)

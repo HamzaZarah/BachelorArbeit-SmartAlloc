@@ -38,8 +38,8 @@ NODE = platform.node()
 REMOTE = NODE.endswith(".scicore.unibas.ch") or NODE.endswith(".cluster.bc2.ch")
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))  # Directory of the script.
 BENCHMARKS_DIR = os.path.join(SCRIPT_DIR, "benchmarks")  # Directory containing benchmark files.
-BENCHMARKS = sorted(glob.glob(os.path.join(BENCHMARKS_DIR, "*-01")))  # List of benchmark files.
-ALGORITHMS = ["smartalloc", "hungarian"]  # Algorithms to be used in the experiment.
+BENCHMARKS = sorted(glob.glob(os.path.join(BENCHMARKS_DIR, "n*")))  # List of benchmark files.
+ALGORITHMS = ["smartalloc", "smartalloc_without_group_preference", "hungarian"]  # Algorithms to be used in the experiment.
 TIME_LIMIT = 1800  # Time limit for each run in seconds.
 MEMORY_LIMIT = 4000  # Memory limit for each run in megabytes.
 
@@ -123,6 +123,9 @@ exp = Experiment(environment=ENV)
 exp.add_resource("solver_smartalloc", "SmartAlloc/main_smartalloc.py")
 exp.add_resource("data_loader_smartalloc", "SmartAlloc/data_loader_smartalloc.py")
 exp.add_resource("solver", "SmartAlloc/solver.py")
+exp.add_resource("solver_smartalloc_without_group_preference", "SmartAlloc without group preference/main_smartalloc_wogp.py")
+exp.add_resource("data_loader_smartalloc_without_group_preference", "SmartAlloc without group preference/data_loader_smartalloc_wogp.py")
+exp.add_resource("solver_without_group_preference", "SmartAlloc without group preference/solver_wogp.py")
 exp.add_resource("solver_hungarian", "Hungarian Method/main_hungarian_method.py")
 exp.add_resource("data_loader_hungarian", "Hungarian Method/data_loader_Hungarian_Method.py")
 exp.add_resource("hungarian_method", "Hungarian Method/hungarian_method.py")
@@ -133,7 +136,12 @@ for algo in ALGORITHMS:
     for task in SUITE:
         run = exp.add_run()
         run.add_resource("task", task, symlink=True)
-        solver_file = "solver_smartalloc" if algo == "smartalloc" else "solver_hungarian"
+        if algo == "smartalloc":
+            solver_file = "solver_smartalloc"
+        elif algo == "smartalloc_without_group_preference":
+            solver_file = "solver_smartalloc_without_group_preference"
+        else:
+            solver_file = "solver_hungarian"
         run.add_command(
             "solve",
             [sys.executable, "{" + solver_file + "}", "{task}"],

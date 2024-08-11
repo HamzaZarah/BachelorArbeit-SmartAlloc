@@ -138,8 +138,7 @@ def main():
     # print(f"Assignment: {best_assignment}") --
     if best_assignment:
         print(f"Assignment: {best_assignment}")
-
-    print(f"Solve time: {solve_time}s")
+        print(f"Solve time: {solve_time}s")
 
 
 if __name__ == "__main__":

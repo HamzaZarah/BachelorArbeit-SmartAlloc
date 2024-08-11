@@ -135,7 +135,10 @@ def main():
     if best_solution_value != float('inf'):
         print(f"Total cost: {best_solution_value}")
 
-    print(f"Assignment: {best_assignment}")
+    # print(f"Assignment: {best_assignment}")
+    if best_assignment:
+        print(f"Assignment: {best_assignment}")
+
     print(f"Solve time: {solve_time}s")
 
 
